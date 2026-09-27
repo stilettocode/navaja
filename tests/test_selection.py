@@ -37,6 +37,9 @@ def test_pennylane_qaoa_returns_a_valid_exact_k_result():
     assert result.metadata["backend"] == "PennyLane default.qubit"
     assert len(result.metadata["gamma"]) == 1
     assert len(result.metadata["beta"]) == 1
+    assert sum(result.metadata["counts"].values()) == 32
+    assert result.metadata["valid_shots"] == sum(n for bits, n in result.metadata["counts"].items() if bits.count("1") == 2)
+    assert all(len(bits) == 3 and set(bits) <= {"0", "1"} for bits in result.metadata["counts"])
 
 
 def test_seeded_qaoa_without_warm_starts_does_not_read_or_write_shared_state(tmp_path):

@@ -18,6 +18,8 @@ The important research rule is:
 
 > This repository does not assume or claim quantum advantage.
 
+The [scientific evaluation report](docs/16-scientific-evaluation-report.md) includes a 12-query local study, exact-oracle checks, seed and survivor ablations, and a three-job IBM pilot. It records hardware usage, distributions, limitations, and the most useful next experiments.
+
 For these small examples, classical methods are expected to be faster and often better. The goal is to understand the engineering and concepts honestly.
 
 ## Quick Start and Commands

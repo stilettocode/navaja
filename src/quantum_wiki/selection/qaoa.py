@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from collections import Counter
 
 import numpy as np
 
@@ -192,6 +193,7 @@ class QAOASelector:
         measured = np.asarray(sample())
         if measured.ndim == 1:
             measured = measured.reshape(1, -1)
+        counts = Counter("".join(str(int(bit)) for bit in row) for row in measured)
         candidates = []
         for measured_bits in measured:
             indices = [index for index, bit in enumerate(measured_bits) if int(bit) == 1]
@@ -210,6 +212,8 @@ class QAOASelector:
             "fallback_used": fallback_used,
             "optimization_backend": "PennyLane default.qubit",
             "sampling_calls": 1,
+            "counts": dict(sorted(counts.items())),
+            "valid_shots": sum(count for bits, count in counts.items() if bits.count("1") == problem.k),
             "warm_start_path": self.config.warm_start_path,
             "warm_start_used": warm_start_used,
             "energy_history": history,

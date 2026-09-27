@@ -32,7 +32,7 @@ QUERIES = [
 ]
 
 
-def split_tournament(problem, primary_count, seed):
+def split_tournament(problem, primary_count, seed, *, random_survivor=True, condition_recovery=True):
     """Experimental 4+4, 5+3, 6+2 variants; same shuffle/survival rules.
 
     Clamp elimination to the target if necessary; a final <=5 group keeps
@@ -56,13 +56,13 @@ def split_tournament(problem, primary_count, seed):
                     continue
                 keep = target if len(pool) <= 5 else 4
                 relevance = problem.relevance[group].copy()
-                if anchors:
+                if anchors and condition_recovery:
                     relevance -= problem.similarity_matrix[np.ix_(group, anchors)].sum(axis=1)
                 subproblem = SelectionProblem([problem.page_ids[i] for i in group], relevance,
-                    problem.similarity_matrix[np.ix_(group, group)], problem.token_counts[group], k=keep-1)
+                    problem.similarity_matrix[np.ix_(group, group)], problem.token_counts[group], k=keep-1 if random_survivor else keep)
                 chosen = select_brute_force(subproblem).selected_indices
                 rejected = [i for i in range(len(group)) if i not in chosen]
-                survivor = survival.choice(rejected)
+                survivor = survival.choice(rejected) if random_survivor else None
                 next_pool.extend(group[i] for i in range(len(group)) if i in chosen or i == survivor)
                 discarded.extend(group[i] for i in rejected if i != survivor)
                 removals_left -= len(group) - keep
