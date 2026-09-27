@@ -151,7 +151,7 @@ def tournament_command(args: argparse.Namespace) -> None:
     if args.candidates < 8:
         raise ValueError("tournament requires candidates >= 8")
     retrieved, problem = build_problem(args.query, args.candidates, 8)
-    calls = tournament_group_calls(len(retrieved))
+    calls = tournament_group_calls(len(retrieved), args.group_size)
     print(f"Query: {args.query}\nCandidates: {len(retrieved)} | Primary: 5 | Recovery: 3 | Seed: {args.seed}")
     print(f"Planned solver calls per algorithm: {calls}")
     print(f"Algorithms: {', '.join(names)}")
@@ -179,7 +179,7 @@ def tournament_command(args: argparse.Namespace) -> None:
             ledger.write(json.dumps(event) + "\n")
             ledger.flush()
 
-        record({"type": "run_start", "query": args.query, "seed": args.seed,
+        record({"type": "run_start", "query": args.query, "seed": args.seed, "group_size": args.group_size,
                 "algorithms": names, "shots": args.shots, "iterations": args.iterations,
                 "layers": args.layers, "planned_group_calls": calls,
                 "planned_hardware_calls": calls if "ibm" in names else 0,
@@ -193,7 +193,7 @@ def tournament_command(args: argparse.Namespace) -> None:
                 selector = QAOASelector(
                     QAOAConfig(layers=args.layers, shots=args.shots, iterations=args.iterations,
                                seed=args.seed, backend="pennylane", use_warm_start=False),
-                    device_factory=IBMDeviceFactory(config, confirm_submit=True, max_calls=calls, max_qubits=5)
+                    device_factory=IBMDeviceFactory(config, confirm_submit=True, max_calls=calls, max_qubits=args.group_size)
                     if name == "ibm" else None,
                 ).select
             else:
@@ -221,7 +221,7 @@ def tournament_command(args: argparse.Namespace) -> None:
 
             started = perf_counter()
             try:
-                result = select_tournament(problem, selector, seed=args.seed, on_event=on_event)
+                result = select_tournament(problem, selector, seed=args.seed, group_size=args.group_size, on_event=on_event)
             except Exception as error:
                 record({"type": "run_error", "algorithm": name, "error_type": type(error).__name__})
                 raise
@@ -272,9 +272,10 @@ def main() -> None:
     ibm.add_argument("--max-hardware-calls", type=int, default=1, help="refuse plans exceeding this sampling-call budget")
     ibm.set_defaults(handler=run_ibm_command)
     for command in ("tournament", "compare-tournament"):
-        tournament = subparsers.add_parser(command, help="five-page groups, five primary winners plus three recovery winners")
+        tournament = subparsers.add_parser(command, help="configurable groups, five primary winners plus three recovery winners")
         tournament.add_argument("query")
         tournament.add_argument("--candidates", type=int, default=30)
+        tournament.add_argument("--group-size", type=int, default=5, choices=range(5, 13))
         tournament.add_argument("--seed", type=int, default=7)
         tournament.add_argument("--layers", type=int, default=1)
         tournament.add_argument("--shots", type=int, default=128)

@@ -121,10 +121,9 @@ class QAOASelector:
         qubits = len(problem.page_ids)
         energies = self._energy_table(problem)
         ideal_device = qml.device("default.qubit", wires=qubits, shots=None)
-        cost_matrix = pnp.diag(energies)
 
         @qml.qnode(ideal_device, interface="autograd")
-        def expectation(parameters):
+        def probabilities(parameters):
             gamma = parameters[: self.config.layers]
             beta = parameters[self.config.layers :]
             for wire in range(qubits):
@@ -137,7 +136,11 @@ class QAOASelector:
                 # become measurable probability differences through interference.
                 for wire in range(qubits):
                     qml.RX(2 * beta[layer], wires=wire)
-            return qml.expval(qml.Hermitian(cost_matrix, wires=range(qubits)))
+            return qml.probs(wires=range(qubits))
+
+        def expectation(parameters):
+            # Equivalent diagonal expectation without a dense 2**n by 2**n matrix.
+            return pnp.dot(probabilities(parameters), energies)
 
         loaded_parameters = load_parameters(
             self.config.warm_start_path,

@@ -1,5 +1,7 @@
 # Scientific Evaluation of Quantum Wiki Selection
 
+Follow-up: the [full tournament comparison](17-full-tournament-evaluation-report.md) completed a separate 46-job hardware tournament and matched local baselines. The three-job pilot findings below remain unchanged.
+
 ## Main findings
 
 This study completed **three real IBM hardware jobs**, 256 shots each, on **ibm_fez**. IBM reported **2 quantum seconds per job, 6 total**. No full hardware tournament was run, and no failed job was resubmitted. All three best-of-256 outputs matched the exact optimum for their five-page group. That outcome alone is weak evidence: even uniform sampling of all 32 bitstrings has a 98.28% chance of encountering the unique optimum within 128 shots.
