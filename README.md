@@ -452,4 +452,3 @@ QAOASelector
 - `src/quantum_wiki/quantum`: state-vector teaching tools and IBM adapter
 - `wiki/sample`: 30 LeetCode guides with overlapping techniques and complementary topics
 - `tests`: objective, QUBO, QAOA, IBM configuration, and integration checks
-- `docs`: educational explanations and implementation notes
