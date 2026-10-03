@@ -15,6 +15,7 @@ env/
 .vscode/
 .idea/
 .docs/
+/docs/
 .coverage
 .coverage.*
 coverage.xml
