@@ -444,22 +444,6 @@ QAOASelector
     -> classical scoring
 ```
 
-## Reading Order
-
-Read the project like a small textbook:
-
-1. [Project overview](docs/00-project-overview.md)
-2. [Wiki selection as binary optimization](docs/05-from-wiki-selection-to-binary-optimization.md)
-3. [QUBO explained](docs/06-qubo-explained.md)
-4. [QAOA explained](docs/07-qaoa-explained.md)
-5. [Circuit walkthrough](docs/08-qaoa-circuit-walkthrough.md)
-6. [Classical optimizer loop](docs/09-classical-optimizer-loop.md)
-7. [Experiment methodology](docs/10-experiment-methodology.md)
-8. [Real quantum hardware](docs/11-real-quantum-hardware.md)
-9. [Limitations and honest claims](docs/12-limitations-and-honest-claims.md)
-
-The [glossary](docs/glossary.md) is useful whenever a term feels unfamiliar.
-
 ## Repository Structure
 
 - `src/quantum_wiki/wiki`: Markdown loading and page models
