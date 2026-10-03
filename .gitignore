@@ -14,6 +14,7 @@ env/
 .ipynb_checkpoints/
 .vscode/
 .idea/
+.docs/
 .coverage
 .coverage.*
 coverage.xml
